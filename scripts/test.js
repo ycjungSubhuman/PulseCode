@@ -15,6 +15,7 @@ window.onload = function(){
 		analyser.getByteFrequencyData(frequencyData);
 	}
 
+	audio.play();
 	renderFrame();
 };
 
