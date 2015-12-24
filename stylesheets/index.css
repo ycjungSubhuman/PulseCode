@@ -1,4 +1,10 @@
 body {
-	background-color: #232432;
+	background-color: #111111;
+}
+#titlelogo{
+	color: white;
+	font-family: "Montserrat";
+	font-size: 40px;
+	text-align: center;
 }
 
