@@ -2,21 +2,39 @@
 <html>
 	<head>
 		<title>TESTROOM</title>
+
+		<!--Load Audio-->
 		<audio id="tangential" src="resources/sound/Tangential_Euphoria.mp3">
+			<!--fallback-->
 			HTML5 audio not supported
 		</audio>
 
 		<!--loads Google font "Montserrat"-->
 		<link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+
+		<!--Load CSS for this html-->
 		<link rel="stylesheet" type="text/css" href="stylesheets/index.css">
 		<meta charset="utf-8"/>
 	</head>
+
+
 	<body>
-		<!--loads audio analyzer and plays the bgm-->
-		<script src="scripts/test.js"></script>
-		<h1 id="titlelogo">
-			PulseCode
-		</h1>
+		<div id="container">
+			<!--Title Logo on the top.-->
+			<h1 id="titlelogo">
+				PulseCode
+			</h1>
+
+			<!--loads audio analyzer and plays the bgm-->
+			<!--Renders each frame according to the music frequency data-->
+			<script src="scripts/test.js"></script>
+
+			<!--audio visuallising graphics-->
+			<canvas id="visual">
+				<!--fallback-->
+				HTML5 canvas not supported
+			</canvas>
+		</div>	
 	</body>
 </html>
 
