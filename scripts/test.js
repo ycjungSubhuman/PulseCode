@@ -1,3 +1,20 @@
+//an array of logvalues that are used to scale the -frequency- axis of the visualizer
+//initial value is "empty", fill this in by calling 'initLogPosition'
+var logpos = [];
+
+function makeLogPositionArray(normalval, buffersize){//in: normalizing value, the size of freqencyBinCount
+	//init an array
+	var arr = [];
+	var log_max = Math.log(buffersize);//used to normalize the value
+
+	//push log values 
+	for(var i=0; i<buffersize; i++){
+		arr.push(normalval* Math.log(i+1)/log_max);
+	}
+	//returns the array
+	return arr;
+}
+
 function initCanvas(){//initiallize the canvas(for TESTING CANVAS DRAW)
 	//get canvas
 	var canvas = document.getElementById("visual");
@@ -16,13 +33,27 @@ function initCanvas(){//initiallize the canvas(for TESTING CANVAS DRAW)
 	}
 }
 
-function updateCanvas(frequencyData, bitcount){//in:Uint8Array, int size
+function updateVisualizer_BassMorph(frequencyData, bufferlength){//in:ByteFreqData, Buffer size
 	//get canvas from HTML
 	var canvas = document.getElementById("visual");
 
 	if(canvas.getContext){//if successfully loaded
+		//init canvas context ad "2d" and get context
+		var ctx = canvas.getContext("2d");
 
 		//clear canvas
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+		//draw curve line according to the data
+		ctx.beginPath();
+		//initial posotion is left; middle;
+		ctx.moveTo(0, canvas.height/2);
+		for(var i=0; i<bufferlength; i++){
+			
+		}
+		
+		
+	}
 
 }
 
@@ -33,6 +64,7 @@ window.onload = function(){
 	var audio = document.getElementById("tangential");
 	var audioSrc = ctx.createMediaElementSource(audio);
 	var analyser = ctx.createAnalyser();
+	var canvas = document.getElementById("visual");
 
 	//connect to destinations
 	audioSrc.connect(analyser);
@@ -40,20 +72,24 @@ window.onload = function(){
 
 	//frequencyBinCount : number of values
 	frequencyData = new Uint8Array(analyser.frequencyBinCount);
+	console.log(analyser.frequencyBinCount);
 
 	//loop to update frequency data
 	function renderFrame(){
 		requestAnimationFrame(renderFrame);
-		analyser.getByteFrequencyData(frequencyData);
 
 		/*implement rendering here*/
 		//updates canvas according to the frequencyData
-		updateCanvas(frequencyData, analyser.frequencyBinCount);
+		updateVisualizer_BassMorph(frequencyData, analyser.frequencyBinCount);
 
 	}
 
-	audio.play();
+	//initiallize a global array that is used for x-axis-scaling of the visualizer
+	logpos = makeLogPositionArray(visual.width, analyser.frequencyBinCount);
+	//init canvas(for canvas drawing TEST)
 	initCanvas();
-	renderFrame();
+
+	audio.play();//play audio
+	renderFrame();//render animation frame recursively
 };
 
