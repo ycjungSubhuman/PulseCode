@@ -1,5 +1,5 @@
 //an array of logvalues that are used to scale the -frequency- axis of the visualizer
-//initial value is "empty", fill this in by calling 'initLogPosition'
+//initial value is "empty", fill this in by calling 'makeLogPositionArray'
 var logpos = [];
 
 function makeLogPositionArray(normalval, buffersize){//in: normalizing value, the size of freqencyBinCount
