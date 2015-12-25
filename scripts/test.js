@@ -40,19 +40,29 @@ function updateVisualizer_BassMorph(frequencyData, bufferlength){//in:ByteFreqDa
 	if(canvas.getContext){//if successfully loaded
 		//init canvas context ad "2d" and get context
 		var ctx = canvas.getContext("2d");
+		var midpos = logpos[0]/2;
+		var parity = 1;//for +- inversion of values
 
 		//clear canvas
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+		ctx.strokeStyle = "rgb(40, 40, 40)";
 		//draw curve line according to the data
 		ctx.beginPath();
 		//initial posotion is left; middle;
-		ctx.moveTo(0, canvas.height/2);
-		for(var i=0; i<bufferlength; i++){
-			
+		ctx.moveTo(-30, canvas.height/2);
+		for(var i=0; i<bufferlength/2-1; i++){//the highest-freq data will be ignored
+			if(parity == 1){
+				ctx.quadraticCurveTo(midpos, Math.pow(frequencyData[i]*3/canvas.height, 3)+75, logpos[i], canvas.height/2);
+			}
+			else{
+				ctx.quadraticCurveTo(midpos, (-1) * Math.pow(frequencyData[i]*3/canvas.height,3)+75, logpos[i], canvas.height/2);
+			}
+			midpos = (logpos[i]+logpos[i+1])/2;//set next curve pos;
+			parity = -parity;
 		}
-		
-		
+		//draw
+		ctx.stroke();
 	}
 
 }
@@ -72,11 +82,11 @@ window.onload = function(){
 
 	//frequencyBinCount : number of values
 	frequencyData = new Uint8Array(analyser.frequencyBinCount);
-	console.log(analyser.frequencyBinCount);
 
 	//loop to update frequency data
 	function renderFrame(){
 		requestAnimationFrame(renderFrame);
+		analyser.getByteFrequencyData(frequencyData);
 
 		/*implement rendering here*/
 		//updates canvas according to the frequencyData
@@ -85,7 +95,7 @@ window.onload = function(){
 	}
 
 	//initiallize a global array that is used for x-axis-scaling of the visualizer
-	logpos = makeLogPositionArray(visual.width, analyser.frequencyBinCount);
+	logpos = makeLogPositionArray(visual.width, analyser.frequencyBinCount/2);
 	//init canvas(for canvas drawing TEST)
 	initCanvas();
 

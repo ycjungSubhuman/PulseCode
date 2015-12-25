@@ -3,8 +3,14 @@ body {
 }
 #titlelogo{
 	color: white;
-	font-family: "Montserrat";
+	font-family: "Quantico";
 	font-size: 40px;
+	text-align: center;
+}
+#sub-titlelogo{
+	color: #EEEEEE;
+	font-family: "Quantico";
+	font-size: 15px;
 	text-align: center;
 }
 #container{
