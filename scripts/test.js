@@ -30,6 +30,8 @@ function initCanvas(){//initiallize the canvas(for TESTING CANVAS DRAW)
 		//draw a blue, transparent square
 		ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
 		ctx.fillRect(30, 30, 55, 50);
+
+		drawWaveFunction(Math.cos, 0, 0, 300, 100);	
 	}
 }
 
@@ -66,7 +68,46 @@ function updateVisualizer_BassMorph(frequencyData, bufferlength){//in:ByteFreqDa
 	}
 
 }
+function drawWaveFunction(waveFunc, x, y, width, height){
+	var canvas = document.getElementById("visual");
 
+	if(canvas.getContext){
+		var ctx = canvas.getContext("2d");
+		ctx.translate(0.5, 0.5);//translate a little bit to fit into the actual pixel
+		var vmidx = x;//vertical midposition; x
+		var vmidy = y+height/2;//vortical midposition; y
+		var samplechunk = 1;//sample width = 1px
+
+		//move the pen to the midposition
+		ctx.strokeStyle = "rgb(40, 40, 40)";
+		ctx.beginPath();
+		ctx.moveTo(vmidx, vmidy);
+
+		for(var i=0; i<width; i+=samplechunk){
+			ctx.lineTo(i, vmidy+10*waveFunc(i));
+		}
+		ctx.lineTo(i, vmidy);
+		ctx.stroke();
+	}
+}
+
+function creatWaveFromFreqencyData(freqData, size){
+
+}
+
+
+function updateVisualizer_revFourier(frequencyData, bufferlength){//in:ByteFreqData, Buffer size
+	//get canvas from HTML
+	var canvas = document.getElementById("visual");
+
+	if(canvas.getContext){//if successfully loaded
+		//init canvas context ad "2d" and get context
+		var ctx = canvas.getContext("2d");
+
+		/*implement here*/
+	}
+
+}
 
 
 window.onload = function(){
