@@ -55,10 +55,10 @@ function updateVisualizer_BassMorph(frequencyData, bufferlength){//in:ByteFreqDa
 		ctx.moveTo(-30, canvas.height/2);
 		for(var i=0; i<bufferlength/2-1; i++){//the highest-freq data will be ignored
 			if(parity == 1){
-				ctx.quadraticCurveTo(midpos, Math.pow(frequencyData[i]*3/canvas.height, 3)+75, logpos[i], canvas.height/2);
+				ctx.quadraticCurveTo(midpos, Math.pow(frequencyData[i]*10/canvas.height, 3)+200, logpos[i], canvas.height/2);
 			}
 			else{
-				ctx.quadraticCurveTo(midpos, (-1) * Math.pow(frequencyData[i]*3/canvas.height,3)+75, logpos[i], canvas.height/2);
+				ctx.quadraticCurveTo(midpos, (-1) * Math.pow(frequencyData[i]*10/canvas.height,3)+200, logpos[i], canvas.height/2);
 			}
 			midpos = (logpos[i]+logpos[i+1])/2;//set next curve pos;
 			parity = -parity;
