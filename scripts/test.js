@@ -2,6 +2,36 @@
 //initial value is "empty", fill this in by calling 'makeLogPositionArray'
 var logpos = [];
 
+//a prototype for a complex number
+function Complex(re, im){
+	this.re = re;
+	this.im = im;
+	this.addWith = function(right){
+		return new Complex(this.re+right.re, this.im+right.im);//thank you GC :)
+	}
+	this.subWith = function(right){
+		return new Complex(this.re-right.re, this.im-right.im);
+	}
+	this.mulWith = function(right){
+		return new Complex(this.re*right.re - this.im*right.im, this.re*right.im + this.im*right.re);
+	}
+	this.divWith = function(right){
+		if(right.re == 0 && right.im == 0){
+			console.log("Complex : div by 0 detected");
+			return new Complex(0, 0);
+		}
+		else{
+			return new Complex((this.re*right.re + this.im*right.im)/(right.re*right.re + right.im*right.im),
+					(this.im*right.re - this.re*right.im)/(right.re*right.re + right.im*right.im)); 
+		}
+	}
+	this.toString = function(){
+		if(this.im>=0)
+			return this.re + "+" + this.im + "i";
+		else
+			return this.re + "" + this.im + "i";
+	}
+}
 function makeLogPositionArray(normalval, buffersize){//in: normalizing value, the size of freqencyBinCount
 	//init an array
 	var arr = [];
@@ -31,7 +61,7 @@ function initCanvas(){//initiallize the canvas(for TESTING CANVAS DRAW)
 		ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
 		ctx.fillRect(30, 30, 55, 50);
 
-		drawWaveFunction(Math.cos, 0, 0, 300, 100);	
+		drawWaveFunction(Math.cos, 0, 0, canvas.width, canvas.height);	
 	}
 }
 
@@ -91,8 +121,17 @@ function drawWaveFunction(waveFunc, x, y, width, height){
 	}
 }
 
-function creatWaveFromFreqencyData(freqData, size){
+function createBassWaveFromFreqencyData(freqData, size){
+	//copy freqData array to dimedData
+	var dimedData = freqData.slice();
 
+	//emphasize bass area and minimize treble area
+	for(var i=1; i<=size; i++){
+		dimedData[i-1] *= 1.0/i; 
+	}
+	
+	//synthesize freqData again
+	
 }
 
 
