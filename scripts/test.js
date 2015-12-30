@@ -7,23 +7,56 @@ function Complex(re, im){
 	this.re = re;
 	this.im = im;
 	this.addWith = function(right){
-		return new Complex(this.re+right.re, this.im+right.im);//thank you GC :)
+		if(typeof(right)=="object")
+			return new Complex(this.re+right.re, this.im+right.im);//thank you GC :)
+		else
+			return new Complex(this.re+right, this.im);
 	}
 	this.subWith = function(right){
-		return new Complex(this.re-right.re, this.im-right.im);
+		if(typeof(right)=="object")
+			return new Complex(this.re-right.re, this.im-right.im);
+		else
+			return new Complex(this.re-right, this.im);
 	}
 	this.mulWith = function(right){
-		return new Complex(this.re*right.re - this.im*right.im, this.re*right.im + this.im*right.re);
+		if(typeof(right)=="object")
+			return new Complex(this.re*right.re - this.im*right.im, this.re*right.im + this.im*right.re);
+		else
+			return new Complex(this.re*right, this.im*right);
 	}
 	this.divWith = function(right){
-		if(right.re == 0 && right.im == 0){
-			console.log("Complex : div by 0 detected");
-			return new Complex(0, 0);
+		if(typeof(right)=="object"){
+			if(right.re === 0 && right.im === 0){
+				console.log("Complex : div by 0 detected");
+				return new Complex(0, 0);
+			}
+			else{
+				return new Complex((this.re*right.re + this.im*right.im)/(right.re*right.re + right.im*right.im),
+						(this.im*right.re - this.re*right.im)/(right.re*right.re + right.im*right.im)); 
+			}
 		}
 		else{
-			return new Complex((this.re*right.re + this.im*right.im)/(right.re*right.re + right.im*right.im),
-					(this.im*right.re - this.re*right.im)/(right.re*right.re + right.im*right.im)); 
+			if(right === 0){
+				console.log("Complex : div by 0 detected");
+				return new Complex(0, 0);
+			}
+			else{
+				return new Complex(this.re/right, this.im/right);
+			}
 		}
+	}
+	this.negate = function(){
+		return new Complex(-this.re, -this.im);
+	}
+	this.conjugate = function(){
+		return new Complex(this.re, -this.im);
+	}
+	this.pow = function(n){
+		var result = new Complex(1, 0);
+		for(var i=0; i<n; i++){
+			result = this.mulWith(result);
+		}
+		return result;
 	}
 	this.toString = function(){
 		if(this.im>=0)
@@ -121,20 +154,48 @@ function drawWaveFunction(waveFunc, x, y, width, height){
 	}
 }
 
-function createBassWaveFromFreqencyData(freqData, size){
-	//copy freqData array to dimedData
-	var dimedData = freqData.slice();
-
-	//emphasize bass area and minimize treble area
-	for(var i=1; i<=size; i++){
-		dimedData[i-1] *= 1.0/i; 
+//note that this fft is only for size = 2^n
+function fft(data, size){//y = Fc. returns y
+	if(size > 1){
+		//split the data into two arrays of equal length: even and odd
+		var even=[], odd=[];
+		for(var i=0; i<size; i++){
+			if(i%2 == 0) even.push(data[i]);
+			else odd.push(data[i]);
+		}
+		//get fft-ed result for each array and reconstruct original data from them
+		var evenResult, oddResult;
+		var result = new Array(size);
+		evenResult = fft(even, size/2);
+		oddResult = fft(odd, size/2);
+		
+		//Reconstruct with Sooley&Tukey Method. 
+		//data[j] = even[j]+(w_n)^j*odd[j] for j=0, 1, 2 ... m-1
+		//data[j+m] = even[j] - (w_n)^j*odd[j] (n == 2m, w_n == (n-th root of 1), n==size)
+		var w = new Complex(Math.cos(2*Math.PI/size), Math.sin(2*Math.PI/size)); //get size-th root of 1
+		for(var i=0; i<size/2; i++){
+			result[i] = w.pow(i).mulWith(oddResult[i]).addWith(evenResult[i]);
+			result[i+size/2] = w.pow(i).mulWith(oddResult[i]).negate().addWith(evenResult[i]);
+		}
+		return result;
 	}
-	
-	//synthesize freqData again
-	
+	else{//size == 1
+		var w = 1;
+		var result = new Array(1);
+		result[0] = w * data[0];
+		return result;
+	}
 }
+function ifft(data, size){//(invF)y = c, returns c
+	//first get fft
+	var ffted = fft(data, size);
+
+	//then get result for (inverse F)
+	//note that we can construct inverse of F by using (conjugate of w) instead of (w)
+	//and divide all by size
 
 
+}
 function updateVisualizer_revFourier(frequencyData, bufferlength){//in:ByteFreqData, Buffer size
 	//get canvas from HTML
 	var canvas = document.getElementById("visual");
@@ -172,6 +233,15 @@ window.onload = function(){
 		//updates canvas according to the frequencyData
 		updateVisualizer_BassMorph(frequencyData, analyser.frequencyBinCount);
 
+	}
+	//a simple example for fft
+	var data = [];
+	for(var i=0; i<16; i++){
+		data.push(i);
+	}
+	var ffted = fft(data, 16);
+	for(var i=0; i<16; i++){
+		console.log(ffted[i].toString());
 	}
 
 	//initiallize a global array that is used for x-axis-scaling of the visualizer
