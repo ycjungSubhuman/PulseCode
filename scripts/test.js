@@ -193,8 +193,14 @@ function ifft(data, size){//(invF)y = c, returns c
 	//then get result for (inverse F)
 	//note that we can construct inverse of F by using (conjugate of w) instead of (w)
 	//and divide all by size
-
-
+	ffted[0] = ffted[0].divWith(size);
+	ffted[size/2] = ffted[size/2].divWith(size);
+	for(var i=1; i<size/2; i++){
+		var tmp = ffted[i].divWith(size);
+		ffted[i] = ffted[size-i].divWith(size);
+		ffted[size-i] = tmp;
+	}
+	return ffted;
 }
 function updateVisualizer_revFourier(frequencyData, bufferlength){//in:ByteFreqData, Buffer size
 	//get canvas from HTML
