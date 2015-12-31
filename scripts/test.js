@@ -228,7 +228,7 @@ window.onload = function(){
 
 		/*implement rendering here*/
 		//updates canvas according to the frequencyData
-		updateVisualizer_BassSum(frequencyData, analyser.frequencyBinCount);
+		updateVisualizer_BassMorph(frequencyData, analyser.frequencyBinCount);
 
 	}
 
