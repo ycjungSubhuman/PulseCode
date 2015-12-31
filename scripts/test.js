@@ -1,6 +1,6 @@
-//an array of logvalues that are used to scale the -frequency- axis of the visualizer
-//initial value is "empty", fill this in by calling 'makeLogPositionArray'
-var logpos = [];
+var logpos = []; /*an array of logvalues that are used to scale the -frequency- axis of the visualizer*/
+				 /*initial value is "empty", fill this in by calling 'makeLogPositionArray'*/
+
 
 //a prototype for a complex number
 function Complex(re, im){
@@ -77,6 +77,11 @@ function makeLogPositionArray(normalval, buffersize){//in: normalizing value, th
 	//returns the array
 	return arr;
 }
+function diminishFrequencyData(data){
+	for(var i=0; i<data.length; i++){
+		data[i] = data[i]/(i+1);
+	}
+}
 
 function initCanvas(){//initiallize the canvas(for TESTING CANVAS DRAW)
 	//get canvas
@@ -131,7 +136,7 @@ function updateVisualizer_BassMorph(frequencyData, bufferlength){//in:ByteFreqDa
 	}
 
 }
-function drawWaveFunction(waveFunc, x, y, width, height){
+function drawWaveFunction(wavefunc, x, y, width, height){
 	var canvas = document.getElementById("visual");
 
 	if(canvas.getContext){
@@ -147,7 +152,7 @@ function drawWaveFunction(waveFunc, x, y, width, height){
 		ctx.moveTo(vmidx, vmidy);
 
 		for(var i=0; i<width; i+=samplechunk){
-			ctx.lineTo(i, vmidy+10*waveFunc(i));
+			ctx.lineTo(i, vmidy+10*wavefunc(i));
 		}
 		ctx.lineTo(i, vmidy);
 		ctx.stroke();
@@ -202,20 +207,6 @@ function ifft(data, size){//(invF)y = c, returns c
 	}
 	return ffted;
 }
-function updateVisualizer_revFourier(frequencyData, bufferlength){//in:ByteFreqData, Buffer size
-	//get canvas from HTML
-	var canvas = document.getElementById("visual");
-
-	if(canvas.getContext){//if successfully loaded
-		//init canvas context ad "2d" and get context
-		var ctx = canvas.getContext("2d");
-
-		/*implement here*/
-	}
-
-}
-
-
 window.onload = function(){
 	var ctx = new AudioContext();
 	var audio = document.getElementById("tangential");
@@ -237,17 +228,8 @@ window.onload = function(){
 
 		/*implement rendering here*/
 		//updates canvas according to the frequencyData
-		updateVisualizer_BassMorph(frequencyData, analyser.frequencyBinCount);
+		updateVisualizer_BassSum(frequencyData, analyser.frequencyBinCount);
 
-	}
-	//a simple example for fft
-	var data = [];
-	for(var i=0; i<16; i++){
-		data.push(i);
-	}
-	var ffted = fft(data, 16);
-	for(var i=0; i<16; i++){
-		console.log(ffted[i].toString());
 	}
 
 	//initiallize a global array that is used for x-axis-scaling of the visualizer
